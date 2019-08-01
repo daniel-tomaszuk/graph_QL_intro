@@ -3,7 +3,9 @@
 # Edit at https://www.gitignore.io/?templates=macos,python,django,pycharm
 
 ### Added by hand:
+.idea/
 .idea
+
 
 ### Django ###
 *.log
