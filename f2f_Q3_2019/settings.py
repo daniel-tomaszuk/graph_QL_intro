@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import redis
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -20,12 +22,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-h^f7#^)4gqpyvpw90k+wukm4xu9+kows8xqlovsn+p7tgw=fd'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+try:
+    DEBUG = os.environ['DEBUG'].title() == 'True'
+except (AttributeError, KeyError,):
+    DEBUG = False
 
-ALLOWED_HOSTS = []
+try:
+    ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split(',')
+except KeyError:
+    ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -37,8 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
     'graphene_django',
+    'core',
+    'tracker'
 ]
 
 GRAPHENE = {
@@ -81,11 +90,38 @@ WSGI_APPLICATION = 'f2f_Q3_2019.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('POSTGRES_HOST'),
+        'PORT': os.environ.get('POSTGRES_PORT'),
     }
 }
 
+
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html
+CELERY_BROKER_URL = (
+        'amqp://{user}:{password}@{host}:{port}//'.format(
+            user=os.environ.get('RABBITMQ_DEFAULT_USER'),
+            password=os.environ.get('RABBITMQ_DEFAULT_PASS'),
+            host=os.environ.get('RABBITMQ_HOST'),
+            port=os.environ.get('RABBITMQ_PORT'),
+        )
+)
+
+REDIS_HOST = os.environ.get('REDIS_HOST')
+REDIS_PORT = os.environ.get('REDIS_PORT')
+REDIS_DB = os.environ.get('REDIS_DB')
+REDIS_NOTIFICATION_KEY = 'notification_send:{type}:id_{id}:{ISO_localtime}'
+REDIS_NOTIFICATION_VALUE = 'MARKED_AS_SEND'
+REDIS_CLIENT = redis.StrictRedis(REDIS_HOST, REDIS_PORT, REDIS_DB)
+
+CELERY_RESULT_BACKEND = 'redis://@{redis_host}:{redis_port}/{redis_db}'.format(
+                            redis_host=REDIS_HOST,
+                            redis_port=REDIS_PORT,
+                            redis_db=REDIS_DB,
+                        )
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -124,3 +160,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.environ.get('STATIC_ROOT')
+MEDIA_ROOT = os.environ.get('MEDIA_ROOT')
