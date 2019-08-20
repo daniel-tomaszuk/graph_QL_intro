@@ -162,3 +162,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.environ.get('STATIC_ROOT')
 MEDIA_ROOT = os.environ.get('MEDIA_ROOT')
+
+# N2YO Config
+N2YO_BASE_URL_V1 = 'https://www.n2yo.com/rest/v1/satellite/'
+N2YO_API_KEY_V1 = os.environ.get('N2YO_API_KEY_V1')
