@@ -1,5 +1,16 @@
 version: '3.7'
 
+x-base: &base
+  build:
+    context: .
+    dockerfile: ./docker/Dockerfile
+  env_file:
+    - .config.env
+
+x-base-network: &base_network
+  networks:
+    - python_backend
+
 volumes:
   postgres:
     external: true
@@ -7,7 +18,7 @@ volumes:
     external: true
   redis:
     external: true
-  rabbitmq:
+  rabbit:
     external: true
 
 networks:
@@ -24,60 +35,59 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data/
       - logs:/var/log/
-    networks:
-      - python_backend
+    <<: *base_network
 
   web:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile
-    env_file:
-      - .config.env
+    <<: *base
+    <<: *base_network
     command: ./backend-entrypoint.sh
     stdin_open: true
     tty: true
     restart: always
     depends_on:
       - db
+      - rabbit
+      - redis
     ports:
       - 8000:8000
-    networks:
-      - python_backend
 
-#  rabbitmq:
-#    image: rabbitmq:3.7.17
+  rabbit:
+    image: rabbitmq:3.7.17
 #    container_name: rabbit
 #    hostname: rabbit
-#    env_file:
-#      - ./config.dev.env
-#    ports:
-#      - 5672:5672
-#    volumes:
-#      - rabbitmq:/var/lib/rabbitmq/
-#
-#  redis:
-#    image: redis:alpine
-#    container_name: redis
-#    hostname: redis
-#    env_file:
-#      - ./config.dev.env
-#    ports:
-#      - 6379:6379
-#    volumes:
-#      - redis:/var/lib/redis
+    env_file:
+      - ./.config.env
+    ports:
+      - 5672:5672
+    volumes:
+      - rabbit:/var/lib/rabbitmq/
+    <<: *base_network
 
+  redis:
+    image: redis:alpine
+    hostname: redis
+    env_file:
+      - ./.config.env
+    depends_on:
+      - rabbit
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/var/lib/redis
+    <<: *base_network
 
+  celery_worker:
+    <<: *base
+    <<: *base_network
+    command: celery -A f2f_Q3_2019 beat -l info
+    depends_on:
+      - redis
+      - rabbit
 
-#  celery_worker:
-#    <<: *base
-#    container_name: celery_worker
-#    command: celery -A app worker -l info
-#    environment:
-#      - SKIP_WAIT=true
-#
-#  celery_beat:
-#    <<: *base
-#    container_name: celery_beat
-#    command: celery -A app beat -l info
-#    environment:
-#      - SKIP_WAIT=true
+  celery_beat:
+    <<: *base
+    <<: *base_network
+    command: celery -A f2f_Q3_2019 beat -l info
+    depends_on:
+      - redis
+      - rabbit
