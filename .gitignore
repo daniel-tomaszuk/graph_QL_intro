@@ -5,7 +5,7 @@
 ### Added by hand:
 ./idea
 .idea
-config.dev.env
+.config.env.local
 
 
 ### Django ###
