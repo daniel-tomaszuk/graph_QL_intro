@@ -19,7 +19,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'get_satellites_positions': {
         'task': 'core.tasks.get_satellite_positions',
-        'schedule': crontab(minute='*'),
+        'schedule': crontab(hour='*'),
         'args': (),
     },
 }

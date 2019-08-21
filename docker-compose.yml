@@ -79,7 +79,7 @@ services:
   celery_worker:
     <<: *base
     <<: *base_network
-    command: celery -A f2f_Q3_2019 beat -l debug
+    command: celery -A f2f_Q3_2019 worker -l debug
     depends_on:
       - redis
       - rabbit
