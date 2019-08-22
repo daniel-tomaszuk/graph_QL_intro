@@ -1,54 +1,33 @@
 import graphene
 from graphene_django import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
 
 from tracker.models import Satellite, Position
 
 
-class SatelliteType(DjangoObjectType):
+class SatelliteNode(DjangoObjectType):
     class Meta:
         model = Satellite
+        filter_fields = {
+            'name': ['exact', 'icontains', 'istartswith'],
+            'norad_id': ['exact']
+        }
+        interfaces = (graphene.relay.Node,)
 
 
-class PositionType(DjangoObjectType):
+class PositionNode(DjangoObjectType):
     class Meta:
         model = Position
+        filter_fields = {
+            'satellite__name': ['exact', 'icontains', 'istartswith'],
+            'timestamp': ['exact']
+        }
+        interfaces = (graphene.relay.Node,)
 
 
-class Query:
-    satellite = graphene.Field(
-        SatelliteType,
-        id=graphene.Int(),
-        norad_id=graphene.Int()
-    )
-    all_satellites = graphene.List(
-        SatelliteType
-    )
+class Query(graphene.ObjectType):
+    satellite = graphene.relay.Node.Field(SatelliteNode)
+    all_satellites = DjangoFilterConnectionField(SatelliteNode)
 
-    position = graphene.Field(
-        PositionType,
-        id=graphene.Int()
-    )
-    all_positions = graphene.List(
-        PositionType
-    )
-
-    def resolve_position(self, info, **kwargs):
-        position_id = kwargs.get('id')
-        if position_id:
-            return Position.objects.get(id=position_id)
-        return None
-
-    def resolve_all_positions(self, info, **kwargs):
-        return Position.objects.select_related('satellite').all()
-
-    def resolve_satellite(self, info, **kwargs):
-        satellite_id = kwargs.get('id')
-        satellite_norad_id = kwargs.get('norad_id')
-        if satellite_id:
-            return Satellite.objects.get(id=satellite_id)
-        if satellite_norad_id:
-            return Satellite.objects.get(norad_id=satellite_norad_id)
-        return None
-
-    def resolve_all_satellites(self, info, **kwargs):
-        return Satellite.objects.all()
+    position = graphene.relay.Node.Field(PositionNode)
+    all_positions = DjangoFilterConnectionField(PositionNode)

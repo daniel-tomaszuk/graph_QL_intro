@@ -3,6 +3,7 @@ aniso8601==6.0.0
 billiard==3.6.0.0
 celery==4.3.0
 Django==2.2.4
+django-filter==2.2.0
 djangorestframework==3.10.2
 graphene==2.1.7
 graphene-django==2.4.0
