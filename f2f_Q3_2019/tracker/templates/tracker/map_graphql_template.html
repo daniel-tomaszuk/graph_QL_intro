@@ -1,12 +1,5 @@
-{% extends "core/base.html" %}
+{% extends "core/map.html" %}
 {% load static %}
-
-{% block additional_head %}
-    <link rel="stylesheet" href="{% static 'tracker/css/tracker.css' %}">
-{% endblock %}
-
 {% block content %}
-    <div class="world-map-div">
-        <img src="{% static 'tracker/world.jpg' %}" alt="world-map"/>
-    </div>
+    {{ block.super }}
 {% endblock %}
