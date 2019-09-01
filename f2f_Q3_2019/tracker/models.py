@@ -27,5 +27,5 @@ class Position(models.Model):
     timestamp = models.DateTimeField(db_index=True, auto_now_add=True)
 
     def __str__(self):
-        return f'Position for Satellite {self.satellite.name} | LAT: ' \
+        return f'Position for Satellite {self.satellite.name} | {self.timestamp.isoformat()} | LAT: ' \
                f'{self.latitude}, LONG: {self.longitude}, ALT: {self.altitude}'
