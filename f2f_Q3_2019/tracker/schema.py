@@ -8,11 +8,17 @@ from tracker.models import Satellite, Position
 class SatelliteNode(DjangoObjectType):
     class Meta:
         model = Satellite
+        fields = ['name', 'norad_id', 'positions']  # `fields` or `exclude`, `__all__` can be used
         filter_fields = {
             'name': ['exact', 'icontains', 'istartswith'],
             'norad_id': ['exact']
         }
         interfaces = (graphene.relay.Node,)
+
+    satellite_alias = graphene.String()
+
+    def resolve_satellite_alias(self, info):
+        return 'This is satellite alias from GraphQL.'
 
 
 class PositionNode(DjangoObjectType):
@@ -23,6 +29,12 @@ class PositionNode(DjangoObjectType):
             'timestamp': ['exact']
         }
         interfaces = (graphene.relay.Node,)
+
+    @classmethod
+    def get_queryset(cls, queryset, info):
+        if info.context.user.is_anonymous:
+            return queryset
+        return queryset
 
 
 class Query(graphene.ObjectType):

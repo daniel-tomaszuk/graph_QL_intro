@@ -39,11 +39,15 @@ def get_satellite_positions():
 
     try:
         response_data: Dict = json.loads(response.content)
+        logger.debug('Dumped response into JSON.')
+
     except JSONDecodeError as e:
         logger.error('Got error during parsing JSON response: %s', e)
         return
 
     if response.status_code == status.HTTP_200_OK and 'error' not in response_data:
+        logger.debug('Starting to process the response')
+
         # look for satellite and append position for it
         satellite_info: Dict = response_data.get('info')
         satellite_position: List = response_data.get('positions')
@@ -76,6 +80,8 @@ def get_satellite_positions():
                         )
                 )
             Position.objects.bulk_create(satellite_positions_to_link)
+            logger.debug('Created new Satellite positions')
             return
-    logger.error(response_data)
+
+    logger.error('Got error response: %s', response_data)
     return
