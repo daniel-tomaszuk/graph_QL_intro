@@ -1,4 +1,12 @@
 {% extends "core/base.html" %}
+{% load static %}
+
+{% block additional_head %}
+    <link rel="stylesheet" href="{% static 'tracker/css/tracker.css' %}">
+{% endblock %}
+
 {% block content %}
-    <h1> GRAPH QL API</h1>
+    <div class="world-map-div">
+        <img src="{% static 'tracker/world.jpg' %}" alt="world-map"/>
+    </div>
 {% endblock %}
