@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+
+    <script src='./components/render-map.js'></script>
+    <title>Graph QL Test.</title>
+</head>
+<body>
+  <div id="app">
+    <h1>{{ testComputed }}</h1>
+    <h1>{{ testMethod() }}</h1>
+    <ul>
+      <render-map
+        v-for="node in dataPoints"
+        v-bind:node="node.node"
+        v-bind:key="node.id"
+      ></render-map>
+    </ul>
+  </div>
+
+  <script>
+
+  const positionQuery = `{
+    allPositions(satellite_Name_Icontains: "Station") {
+      edges {
+        node {
+          satellite {
+            name
+            noradId
+            satelliteAlias
+          }
+          longitude
+          latitude
+        }
+      }
+    }
+  }`;
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      question: '',
+      dataPoints: [],
+    },
+    computed: {
+      testComputed: function () {
+        return 'Computed Test String.'
+      }
+    },
+    methods: {
+      testMethod: function() {
+        return 'Method Test String.'
+      }
+    },
+    created() {
+      // call backed for info on vue instance creation
+      axios({
+        method: 'get',
+        url: 'http://localhost:8000/api/v1/GRAPH/?query=' + positionQuery,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then(function (response) {
+        console.log('Successful data fetch.')
+        for (node of response.data.data.allPositions.edges) {
+          app.dataPoints.push(node);
+        };
+
+
+      }).catch(function (error) {
+        console.log('Error has occured: ' + error.statusTet)
+        console.log(error.data)
+        
+      })
+    }
+  })
+
+  </script>
+  
+</body>
+</html>
