@@ -6,7 +6,7 @@
 ./idea
 .idea
 .config.env.local
-
+.config.env
 
 ### Django ###
 *.log
