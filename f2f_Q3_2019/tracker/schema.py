@@ -33,8 +33,8 @@ class PositionNode(DjangoObjectType):
     @classmethod
     def get_queryset(cls, queryset, info):
         if info.context.user.is_anonymous:
-            return queryset
-        return queryset
+            return queryset.order_by('-timestamp')
+        return queryset.order_by('-timestamp')
 
 
 class Query(graphene.ObjectType):
