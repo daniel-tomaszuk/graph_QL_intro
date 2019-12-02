@@ -9,6 +9,7 @@
 .config.env
 *.env
 *.local
+.*
 
 ### Django ###
 *.log
