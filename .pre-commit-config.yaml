@@ -24,8 +24,7 @@ repos:
     - id: mixed-line-ending
       args:
         - --fix=auto
-- repo: git://github.com/FalconSocial/pre-commit-python-sorter
-  rev: b57843b0b874df1d16eb0bef00b868792cb245c2
-  hooks:
-    - id: python-import-sorter
-      exclude: '(.*/migrations/.*.py|settings.py)'
+-   repo: https://github.com/pre-commit/mirrors-isort
+    rev: ''
+    hooks:
+    -   id: isort
