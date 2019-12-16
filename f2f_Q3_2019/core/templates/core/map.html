@@ -2,12 +2,170 @@
 {% load static %}
 
 {% block additional_head %}
-    <link rel="stylesheet" href="{% static 'tracker/css/tracker.css' %}">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <script src="{% static 'core/components/make-request.js' %}"></script>
+    <script src="{% static 'core/components/draw-points.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
 {% endblock %}
 
 {% block content %}
-    <div class="world-map">
-        <img src="{% static 'tracker/world.jpg' %}" alt="world-map"/>
+    <div id="app">
+        <div id="box">
+            <img id="map" src="{% static 'tracker/world.jpg' %}" alt="world-map"/>
+        </div>
     </div>
 {% endblock %}
 
+{% block additional_scripts %}
+<script>
+  {# graphQL query  #}
+  const positionQuery = `{
+    allPositions(satellite_Name_Icontains: "Station") {
+      edges {
+        node {
+          satellite {
+            name
+            noradId
+            satelliteAlias
+          }
+          longitude
+          latitude
+        }
+      }
+    }
+  }`;
+
+  {# TODO: FIX #}
+  const backendBaseURL = 'http://localhost:8000/'
+  const graphAPIURL = backendBaseURL + 'api/v1/GRAPH/'
+  const worldMapURL = backendBaseURL + 'static/tracker/world.jpg'
+  const satelliteURL = backendBaseURL + 'static/tracker/sat.png'
+  const dataPointURL = backendBaseURL + 'static/tracker/square.png'
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      question: '',
+      dataPoints: [],
+      worldMapURL: worldMapURL,
+      graphAPIURL: graphAPIURL,
+    },
+    computed: {
+      getWorldURL: function () {
+        return this.worldMapURL
+      }
+    },
+    methods: {
+      testMethod: function() {
+        return 'Method Test String.'
+      }
+    },
+    // call backed for info on vue instance creation
+    created() {
+      // get data points from BE - draw trajectories for them
+      makeRequest('get', graphAPIURL, positionQuery).then(function (response){
+        var mapDiv = document.querySelector('#box');
+        var positionInfo = mapDiv.getBoundingClientRect();
+        var pointList = [];
+        var color = '#' + (Math.random()*0xFFFFFF<<0).toString(16);
+        var point_list = [];
+
+
+        var satIcon = $('<img />');
+        var mostRecentNode = response.data.allPositions.edges[0].node
+        var dataContent = "Longi: "+ (mostRecentNode.longitude).toFixed(2) +
+                          '<br>' +
+                          "Lati: " + (mostRecentNode.latitude).toFixed(2)
+
+        $(satIcon).attr('class', 'pop');
+        $(satIcon).attr('id', 'SatId_' + mostRecentNode.satellite.noradId);
+        $(satIcon).attr('src', satelliteURL);
+        $(satIcon).attr('alt', 'Sat ' + mostRecentNode.satellite.name);
+        $(satIcon).attr('data-toggle', 'popover');
+        $(satIcon).attr('data-trigger', 'focus');
+        $(satIcon).attr('data-html', true);
+        $(satIcon).attr('title', mostRecentNode.satellite.name);
+        $(satIcon).attr('data-content', dataContent);
+        $(satIcon).css('display','none');
+        $(satIcon).css('width', "2%");
+        $(satIcon).css('height', "4%");
+        $(satIcon).css('position', 'absolute');
+        $(satIcon).css('top', '0px');
+        $(satIcon).css('left', '0px');
+
+        // put the most actual satellite position on map
+        // count where to put the most actual satellite position
+        xPx = scaleX(mostRecentNode.longitude, positionInfo.width);
+        yPx = scaleY(mostRecentNode.latitude, positionInfo.height);
+        $(satIcon).css('left', xPx - 10 + "px");
+        $(satIcon).css('top', yPx - 20 + "px");
+        $(satIcon).css('display', '');
+        $(satIcon).css('z-index', '10');
+        $(satIcon).appendTo($(mapDiv));
+
+        // main loop for data points
+        for (var l = 0; l < response.data.allPositions.edges.length; l++){
+          var node = response.data.allPositions.edges[l].node
+          var satellite = node.satellite
+
+          // find history objects for satellite with name i-th unique name
+          var point = mapDivPoint(color);
+          $(point).appendTo($('#box'));
+          // count where to put past position icon
+          var xPx = scaleX(node.longitude, positionInfo.width);
+          var yPx = scaleY(node.latitude, positionInfo.height);
+
+          $(point).css('left', xPx + "px");
+          $(point).css('top', yPx + "px");
+          $(point).css('display', '');
+          // push history x and y coordinates in the coordinates list
+          point_list.push([xPx, yPx]);
+
+        }
+
+        // draw lines between points
+        for (var k = 0; k < parseInt((point_list.length)) - 1; k++){
+
+            var x1 = parseInt(point_list[k][0])
+            var y1 = parseInt(point_list[k][1])
+            var x2 = parseInt(point_list[k+1][0])
+            var y2 = parseInt(point_list[k+1][1])
+            // count distance between two points
+            var dist = Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
+            // draw line if the distance is close enough
+            if (dist < 100){
+                mapDiv.appendChild(createLine(x1, y1, x2, y2, color));
+            };
+        };
+
+
+        // popovers
+        $(".pop").each(function() {
+            $(this).on('mouseover', function(event){
+                $(this).popover('show');
+            });
+
+            $(this).on('mouseout', function(){
+                $(this).popover('hide');
+            });
+
+            $(this).on('hide.bs.popover', function(){
+                $(document).off('click.popover');
+            });
+        });
+      });
+    }
+  })
+
+</script>
+{% endblock %}
