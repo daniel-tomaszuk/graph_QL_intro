@@ -75,7 +75,11 @@
     // call backed for info on vue instance creation
     created() {
       // get data points from BE - draw trajectories for them
+      console.log('HERE')
+      console.log(graphAPIURL)
+      console.log(positionQuery)
       makeRequest('get', graphAPIURL, positionQuery).then(function (response){
+
         var mapDiv = document.querySelector('#box');
         var positionInfo = mapDiv.getBoundingClientRect();
         var pointList = [];
