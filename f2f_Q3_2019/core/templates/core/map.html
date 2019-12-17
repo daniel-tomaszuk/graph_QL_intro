@@ -45,8 +45,7 @@
     }
   }`;
 
-  {# TODO: FIX #}
-  const backendBaseURL = 'http://localhost:8000/'
+  let backendBaseURL = "{{ backend_url }}";
   const graphAPIURL = backendBaseURL + 'api/v1/GRAPH/'
   const worldMapURL = backendBaseURL + 'static/tracker/world.jpg'
   const satelliteURL = backendBaseURL + 'static/tracker/sat.png'

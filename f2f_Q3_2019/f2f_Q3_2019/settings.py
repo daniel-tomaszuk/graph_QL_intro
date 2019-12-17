@@ -33,8 +33,10 @@ except (
 ):
     DEBUG = False
 
+AWS_URL_ENDPOINT = os.getenv("AWS_URL_ENDPOINT", "http://localhost:8000/")
+
 try:
-    ALLOWED_HOSTS = os.environ["ALLOWED_HOSTS"].split(",")
+    ALLOWED_HOSTS = os.environ["ALLOWED_HOSTS"].split(",") + [AWS_URL_ENDPOINT]
 except KeyError:
     ALLOWED_HOSTS = []
 
