@@ -78,7 +78,7 @@
       console.log('HERE')
       console.log(graphAPIURL)
       console.log(positionQuery)
-      makeRequest('get', 'http://' + graphAPIURL, positionQuery).then(function (response){
+      makeRequest('get', graphAPIURL, positionQuery).then(function (response){
 
         var mapDiv = document.querySelector('#box');
         var positionInfo = mapDiv.getBoundingClientRect();
