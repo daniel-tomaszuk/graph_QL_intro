@@ -45,8 +45,8 @@
     }
   }`;
 
-  let backendBaseURL = "{{ backend_url }}";
-  const graphAPIURL = 'http://' + backendBaseURL + '/api/v1/GRAPH/'
+  let backendBaseURL = '{{ backend_url }}:8000';
+  const graphAPIURL = 'http://' + backendBaseURL + '/api/v1/GRAPH/';
 
   const worldMapURL = '{% static "tracker/world.jpg" %}';
   const satelliteURL = '{% static "tracker/sat.png" %}';
