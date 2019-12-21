@@ -12,6 +12,7 @@ function makeRequest(method, url, positionQuery) {
         headers: {
           'Content-Type': 'application/json',
         },
+        timeoutSeconds: 5,
       }).then(function (response) {
         console.log('Successful data fetch.')
         return response.data
