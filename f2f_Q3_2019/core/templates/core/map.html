@@ -52,9 +52,6 @@
   const satelliteURL = '{% static "tracker/sat.png" %}';
   const dataPointURL = '{% static "tracker/square.png" %}';
 
-  console.log('GRAPH API');
-  console.log(graphAPIURL);
-
   var app = new Vue({
     el: '#app',
     data: {
@@ -76,9 +73,6 @@
     // call backed for info on vue instance creation
     created() {
       // get data points from BE - draw trajectories for them
-      console.log('HERE')
-      console.log(graphAPIURL)
-      console.log(positionQuery)
       makeRequest('get', graphAPIURL, positionQuery).then(function (response){
 
         var mapDiv = document.querySelector('#box');

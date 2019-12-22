@@ -17,8 +17,7 @@ function makeRequest(method, url, positionQuery) {
         console.log('Successful data fetch.')
         return response.data
       }).catch(function (error) {
-        console.log(error)
-        console.log('Error has occured: ' + error.statusTet)
+        console.log('Error has occured')
         console.log(error.data)
       })
 }
