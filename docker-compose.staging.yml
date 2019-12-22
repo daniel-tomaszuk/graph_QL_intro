@@ -4,6 +4,8 @@ x-base: &base
   build:
     context: .
     dockerfile: ./docker/Dockerfile
+
+x-env-file: &env_file
   env_file:
     - .config.env
 
@@ -26,26 +28,15 @@ networks:
     external: true
 
 services:
-  db:
-    image: postgres:11.4
-    ports:
-      - 5432:5432
-    env_file:
-      - .config.env
-    volumes:
-      - postgres:/var/lib/postgresql/data/
-      - logs:/var/log/
-    <<: *base_network
-
   web:
     <<: *base
+    <<: *env_file
     <<: *base_network
     command: ./backend-entrypoint.sh
     stdin_open: true
     tty: true
     restart: always
     depends_on:
-      - db
       - rabbit
       - redis
     ports:
@@ -53,10 +44,7 @@ services:
 
   rabbit:
     image: rabbitmq:3.7.17
-#    container_name: rabbit
-#    hostname: rabbit
-    env_file:
-      - ./.config.env
+    <<: *env_file
     ports:
       - 5672:5672
     volumes:
@@ -66,8 +54,7 @@ services:
   redis:
     image: redis:alpine
     hostname: redis
-    env_file:
-      - ./.config.env
+    <<: *env_file
     depends_on:
       - rabbit
     ports:
@@ -79,6 +66,7 @@ services:
   celery_worker:
     <<: *base
     <<: *base_network
+    <<: *env_file
     command: celery -A f2f_Q3_2019 worker -l info
     depends_on:
       - redis
@@ -87,6 +75,7 @@ services:
   celery_beat:
     <<: *base
     <<: *base_network
+    <<: *env_file
     command: celery -A f2f_Q3_2019 beat -l info
     depends_on:
       - redis

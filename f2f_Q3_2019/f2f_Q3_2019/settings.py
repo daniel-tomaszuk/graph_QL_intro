@@ -41,8 +41,6 @@ try:
 except KeyError:
     ALLOWED_HOSTS = []
 
-print("DEBUG: ", ALLOWED_HOSTS)
-
 # Application definition
 
 INSTALLED_APPS = [
