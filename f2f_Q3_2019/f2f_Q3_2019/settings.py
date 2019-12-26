@@ -14,6 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import redis
+from django.core.files.storage import FileSystemStorage
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -154,13 +155,24 @@ USE_L10N = True
 
 USE_TZ = True
 
+# AWS - settings via django-storages - https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
+AWS_DEFAULT_ACL = "public-read"
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_S3_CUSTOM_DOMAIN = "%s.s3.amazonaws.com" % AWS_STORAGE_BUCKET_NAME
 
-STATIC_URL = "/static/"
-STATIC_ROOT = os.environ.get("STATIC_ROOT")
-MEDIA_ROOT = os.environ.get("MEDIA_ROOT")
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=86400",  # 24h
+}
+
+# Static files
+STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 # N2YO Config
 N2YO_BASE_URL_V1 = "https://www.n2yo.com/rest/v1/satellite/"
