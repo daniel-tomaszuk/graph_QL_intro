@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.7-buster
 
 ENV WORKDIR '/app'
 ENV MANAGEDIR 'f2f_Q3_2019'
