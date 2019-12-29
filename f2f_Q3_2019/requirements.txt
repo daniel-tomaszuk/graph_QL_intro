@@ -13,6 +13,7 @@ graphene==2.1.7
 graphene-django==2.4.0
 graphql-core==2.2.1
 graphql-relay==2.0.0
+gunicorn==20.0.4
 isort==4.3.21
 kombu==4.6.3
 pip-tools==4.3.0

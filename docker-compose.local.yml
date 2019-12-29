@@ -6,11 +6,13 @@ x-base-network: &base_network
 
 volumes:
   postgres:
-    external: true
+    external: false
+  logs:
+    external: false
 
 networks:
   python_backend:
-    external: true
+    external: false
 
 services:
   db:
