@@ -16,6 +16,8 @@ import os
 import redis
 from django.core.files.storage import FileSystemStorage
 
+from core.exceptions import ImproperlyConfigured
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -34,7 +36,10 @@ except (
 ):
     DEBUG = False
 
-AWS_URL_ENDPOINT = os.getenv("AWS_URL_ENDPOINT", "localhost")
+AWS_URL_ENDPOINT = os.getenv("AWS_URL_ENDPOINT") or "0.0.0.0"
+
+if not AWS_URL_ENDPOINT:
+    raise ImproperlyConfigured
 
 try:
     ALLOWED_HOSTS = (os.environ["ALLOWED_HOSTS"] or "").split(",")

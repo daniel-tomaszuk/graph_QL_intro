@@ -4,6 +4,10 @@ x-base-network: &base_network
   networks:
     - python_backend
 
+x-local-env: &local_env
+  env_file:
+    - .config.env.local
+
 volumes:
   postgres:
     external: false
@@ -19,9 +23,63 @@ services:
     image: postgres:11.4
     ports:
       - 5432:5432
-    env_file:
-      - .config.env.local
     volumes:
       - postgres:/var/lib/postgresql/data/
       - logs:/var/log/
     <<: *base_network
+    <<: *local_env
+
+  web:
+    <<: *local_env
+
+  rabbit:
+    image: rabbitmq:3.7-alpine
+    ports:
+      - 5672:5672
+    volumes:
+      - rabbit:/var/lib/rabbitmq/
+    <<: *base_network
+    <<: *local_env
+
+
+  redis:
+    image: redis:alpine
+    hostname: redis
+    depends_on:
+      - rabbit
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/var/lib/redis
+    <<: *base_network
+    <<: *local_env
+
+
+  celery_worker:
+    <<: *base_network
+    <<: *local_env
+
+    command: celery -A f2f_Q3_2019 worker -l info
+    depends_on:
+      - redis
+      - rabbit
+
+  celery_beat:
+    <<: *base_network
+    <<: *local_env
+    command: celery -A f2f_Q3_2019 beat -l info
+    depends_on:
+      - redis
+      - rabbit
+
+  nginx_proxy:
+    image: nginx:1.17-alpine
+    <<: *base_network
+    <<: *local_env
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    ports:
+      - 80:80
+    depends_on:
+      - web
