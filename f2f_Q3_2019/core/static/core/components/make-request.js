@@ -11,6 +11,7 @@ function makeRequest(method, url, positionQuery) {
         url: url,
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'max-age=60, public',
         },
         timeoutSeconds: 5,
       }).then(function (response) {

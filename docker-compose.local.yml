@@ -63,6 +63,7 @@ services:
     depends_on:
       - redis
       - rabbit
+      - celery_beat
 
   celery_beat:
     <<: *base_network
