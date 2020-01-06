@@ -4,6 +4,8 @@ x-base: &base
   build:
     context: .
     dockerfile: ./docker/Dockerfile
+  volumes:
+    - ./f2f_Q3_2019/static:/f2f_Q3_2019/static
 
 x-env-file: &env_file
   env_file:
@@ -86,8 +88,8 @@ services:
     <<: *base_network
     <<: *env_file
     volumes:
-      - ./:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./f2f_Q3_2019/static:/f2f_Q3_2019/static
     ports:
       - 80:80
     depends_on:
