@@ -1,6 +1,6 @@
 FROM python:3.7-buster
 
-ENV WORKDIR '/app'
+ENV WORKDIR '/f2f_Q3_2019'
 ENV MANAGEDIR 'f2f_Q3_2019'
 
 WORKDIR ${WORKDIR}
