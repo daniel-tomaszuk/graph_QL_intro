@@ -1,12 +1,9 @@
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
+from rest_framework import viewsets
 
-from core.tasks import get_satellite_positions
+from api.v1.REST.serializers import SatelliteSerializer
+from tracker.models import Satellite
 
 
-class SatellitePositionsView(ViewSet):
-
-    def list(self, request):
-        get_satellite_positions()
-        return Response(status=status.HTTP_200_OK)
+class SatellitePositionsView(viewsets.ModelViewSet):
+    queryset = Satellite.objects.prefetch_related("positions").all()
+    serializer_class = SatelliteSerializer

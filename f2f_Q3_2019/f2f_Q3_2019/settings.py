@@ -36,7 +36,7 @@ except (
 ):
     DEBUG = False
 
-AWS_URL_ENDPOINT = os.getenv("AWS_URL_ENDPOINT") or "0.0.0.0"
+AWS_URL_ENDPOINT = os.getenv("AWS_URL_ENDPOINT") or "0.0.0.0:8000"
 
 if not AWS_URL_ENDPOINT:
     raise ImproperlyConfigured
