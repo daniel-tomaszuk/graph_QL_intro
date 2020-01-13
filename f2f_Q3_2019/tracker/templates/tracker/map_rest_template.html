@@ -38,8 +38,8 @@
             makeRequest('get', restAPIUrl, '').then(function (response) {
                 console.log('GOT RESPONSE');
 
-                var mapDiv = document.querySelector('#box');
-                var positionInfo = mapDiv.getBoundingClientRect();
+                var mapDiv = $('#box');
+                var positionInfo = document.querySelector('#box').getBoundingClientRect();
                 var color = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
                 var point_list = [];
 
@@ -73,7 +73,7 @@
                 $(satIcon).css('top', yPx - 20 + "px");
                 $(satIcon).css('display', '');
                 $(satIcon).css('z-index', '10');
-                $(satIcon).appendTo($(mapDiv));
+                $(mapDiv).append($(satIcon));
 
                 // main loop for data points
                 for (var l = 1; l < dataResponse.positions.length; l++) {
@@ -82,7 +82,7 @@
 
                     // find history objects for satellite with name i-th unique name
                     var point = mapDivPoint(color);
-                    $(point).appendTo($(mapDiv));
+                    $(mapDiv).append($(point));
                     // count where to put past position icon
                     var xPx = scaleX(node.longitude, positionInfo.width);
                     var yPx = scaleY(node.latitude, positionInfo.height);                    var xPx = scaleX(node.longitude, positionInfo.width);
@@ -102,7 +102,7 @@
                     var dist = Math.sqrt(Math.pow((xPx_prev - xPx), 2) + Math.pow((yPx_prev - yPx), 2));
                     // draw line if the distance is close enough
                     if (dist < 100) {
-                        mapDiv.appendChild(createLine(xPx_prev, yPx_prev, xPx, yPx, color));
+                        $(mapDiv).append(createLine(xPx_prev, yPx_prev, xPx, yPx, color));
                     }
                     console.log('DRAW');
                 }
