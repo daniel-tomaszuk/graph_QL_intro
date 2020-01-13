@@ -36,6 +36,7 @@
             const dataPointURL = '{% static "tracker/square.png" %}';
 
             makeRequest('get', restAPIUrl, '').then(function (response) {
+                console.log('GOT RESPONSE');
 
                 var mapDiv = document.querySelector('#box');
                 var positionInfo = mapDiv.getBoundingClientRect();
@@ -79,7 +80,7 @@
                     var node = dataResponse.positions[l];
                     // find history objects for satellite with name i-th unique name
                     var point = mapDivPoint(color);
-                    $(point).appendTo($('#box'));
+                    $(point).appendTo($(mapDiv));
                     // count where to put past position icon
                     var xPx = scaleX(node.longitude, positionInfo.width);
                     var yPx = scaleY(node.latitude, positionInfo.height);
@@ -88,12 +89,13 @@
                     $(point).css('top', yPx + "px");
                     $(point).css('display', '');
                     // push history x and y coordinates in the coordinates list
+                    console.log('APPEND');
                     point_list.push([xPx, yPx]);
                 }
 
                 // draw lines between points
                 for (var k = 0; k < parseInt((point_list.length)) - 1; k++) {
-
+                    console.log('DRAW');
                     var x1 = parseInt(point_list[k][0])
                     var y1 = parseInt(point_list[k][1])
                     var x2 = parseInt(point_list[k + 1][0])
@@ -104,9 +106,7 @@
                     if (dist < 100) {
                         mapDiv.appendChild(createLine(x1, y1, x2, y2, color));
                     }
-                    ;
                 }
-                ;
 
                 // popovers
                 $(".pop").each(function () {
