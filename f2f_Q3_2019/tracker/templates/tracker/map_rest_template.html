@@ -21,104 +21,108 @@
 {% endblock %}
 
 {% block additional_scripts %}
-<script>
-  let backendBaseURL = '{{ backend_url }}';
-  console.log('GOT BACKEND URL');
-  console.log(backendBaseURL);
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let backendBaseURL = '{{ backend_url }}';
+            console.log('GOT BACKEND URL');
+            console.log(backendBaseURL);
 
-  const restAPIUrl = 'http://' + backendBaseURL + '{% url "satellite-positions-rest-list" %}'
+            const restAPIUrl = 'http://' + backendBaseURL + '{% url "satellite-positions-rest-list" %}'
 
-  console.log(restAPIUrl)
+            console.log(restAPIUrl)
 
-  const worldMapURL = '{% static "tracker/world.jpg" %}';
-  const satelliteURL = '{% static "tracker/sat.png" %}';
-  const dataPointURL = '{% static "tracker/square.png" %}';
+            const worldMapURL = '{% static "tracker/world.jpg" %}';
+            const satelliteURL = '{% static "tracker/sat.png" %}';
+            const dataPointURL = '{% static "tracker/square.png" %}';
 
-  makeRequest('get', restAPIUrl, '').then(function (response){
+            makeRequest('get', restAPIUrl, '').then(function (response) {
 
-        var mapDiv = document.querySelector('#box');
-        var positionInfo = mapDiv.getBoundingClientRect();
-        var color = '#' + (Math.random()*0xFFFFFF<<0).toString(16);
-        var point_list = [];
+                var mapDiv = document.querySelector('#box');
+                var positionInfo = mapDiv.getBoundingClientRect();
+                var color = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
+                var point_list = [];
 
-        var satIcon = $('<img />');
-        var dataResponse = response[0];
-        var dataContent = "Longi: "+ (dataResponse.positions[0].longitude).toFixed(2) +
-                          '<br>' +
-                          "Lati: " + (dataResponse.positions[0].latitude).toFixed(2)
+                var satIcon = $('<img />');
+                var dataResponse = response[0];
+                var dataContent = "Longi: " + (dataResponse.positions[0].longitude).toFixed(2) +
+                    '<br>' +
+                    "Lati: " + (dataResponse.positions[0].latitude).toFixed(2)
 
-        $(satIcon).attr('class', 'pop');
-        $(satIcon).attr('id', 'SatId_' + dataResponse.noradId);
-        $(satIcon).attr('src', satelliteURL);
-        $(satIcon).attr('alt', 'Sat ' + dataResponse.name);
-        $(satIcon).attr('data-toggle', 'popover');
-        $(satIcon).attr('data-trigger', 'focus');
-        $(satIcon).attr('data-html', true);
-        $(satIcon).attr('title', dataResponse.name);
-        $(satIcon).attr('data-content', dataContent);
-        $(satIcon).css('display','none');
-        $(satIcon).css('width', "2%");
-        $(satIcon).css('height', "4%");
-        $(satIcon).css('position', 'absolute');
-        $(satIcon).css('top', '0px');
-        $(satIcon).css('left', '0px');
+                $(satIcon).attr('class', 'pop');
+                $(satIcon).attr('id', 'SatId_' + dataResponse.noradId);
+                $(satIcon).attr('src', satelliteURL);
+                $(satIcon).attr('alt', 'Sat ' + dataResponse.name);
+                $(satIcon).attr('data-toggle', 'popover');
+                $(satIcon).attr('data-trigger', 'focus');
+                $(satIcon).attr('data-html', true);
+                $(satIcon).attr('title', dataResponse.name);
+                $(satIcon).attr('data-content', dataContent);
+                $(satIcon).css('display', 'none');
+                $(satIcon).css('width', "2%");
+                $(satIcon).css('height', "4%");
+                $(satIcon).css('position', 'absolute');
+                $(satIcon).css('top', '0px');
+                $(satIcon).css('left', '0px');
 
-        // put the most actual satellite position on map
-        // count where to put the most actual satellite position
-        xPx = scaleX(dataResponse.positions[0].longitude, positionInfo.width);
-        yPx = scaleY(dataResponse.positions[0].latitude, positionInfo.height);
-        $(satIcon).css('left', xPx - 10 + "px");
-        $(satIcon).css('top', yPx - 20 + "px");
-        $(satIcon).css('display', '');
-        $(satIcon).css('z-index', '10');
-        $(satIcon).appendTo($(mapDiv));
+                // put the most actual satellite position on map
+                // count where to put the most actual satellite position
+                xPx = scaleX(dataResponse.positions[0].longitude, positionInfo.width);
+                yPx = scaleY(dataResponse.positions[0].latitude, positionInfo.height);
+                $(satIcon).css('left', xPx - 10 + "px");
+                $(satIcon).css('top', yPx - 20 + "px");
+                $(satIcon).css('display', '');
+                $(satIcon).css('z-index', '10');
+                $(satIcon).appendTo($(mapDiv));
 
-        // main loop for data points
-        for (var l = 0; l < dataResponse.positions.length; l++){
-          var node = dataResponse.positions[l];
-          // find history objects for satellite with name i-th unique name
-          var point = mapDivPoint(color);
-          $(point).appendTo($('#box'));
-          // count where to put past position icon
-          var xPx = scaleX(node.longitude, positionInfo.width);
-          var yPx = scaleY(node.latitude, positionInfo.height);
+                // main loop for data points
+                for (var l = 0; l < dataResponse.positions.length; l++) {
+                    var node = dataResponse.positions[l];
+                    // find history objects for satellite with name i-th unique name
+                    var point = mapDivPoint(color);
+                    $(point).appendTo($('#box'));
+                    // count where to put past position icon
+                    var xPx = scaleX(node.longitude, positionInfo.width);
+                    var yPx = scaleY(node.latitude, positionInfo.height);
 
-          $(point).css('left', xPx + "px");
-          $(point).css('top', yPx + "px");
-          $(point).css('display', '');
-          // push history x and y coordinates in the coordinates list
-          point_list.push([xPx, yPx]);
-        }
+                    $(point).css('left', xPx + "px");
+                    $(point).css('top', yPx + "px");
+                    $(point).css('display', '');
+                    // push history x and y coordinates in the coordinates list
+                    point_list.push([xPx, yPx]);
+                }
 
-        // draw lines between points
-        for (var k = 0; k < parseInt((point_list.length)) - 1; k++){
+                // draw lines between points
+                for (var k = 0; k < parseInt((point_list.length)) - 1; k++) {
 
-            var x1 = parseInt(point_list[k][0])
-            var y1 = parseInt(point_list[k][1])
-            var x2 = parseInt(point_list[k+1][0])
-            var y2 = parseInt(point_list[k+1][1])
-            // count distance between two points
-            var dist = Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
-            // draw line if the distance is close enough
-            if (dist < 100){
-                mapDiv.appendChild(createLine(x1, y1, x2, y2, color));
-            };
-        };
+                    var x1 = parseInt(point_list[k][0])
+                    var y1 = parseInt(point_list[k][1])
+                    var x2 = parseInt(point_list[k + 1][0])
+                    var y2 = parseInt(point_list[k + 1][1])
+                    // count distance between two points
+                    var dist = Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
+                    // draw line if the distance is close enough
+                    if (dist < 100) {
+                        mapDiv.appendChild(createLine(x1, y1, x2, y2, color));
+                    }
+                    ;
+                }
+                ;
 
-        // popovers
-        $(".pop").each(function() {
-            $(this).on('mouseover', function(event){
-                $(this).popover('show');
-            });
+                // popovers
+                $(".pop").each(function () {
+                    $(this).on('mouseover', function (event) {
+                        $(this).popover('show');
+                    });
 
-            $(this).on('mouseout', function(){
-                $(this).popover('hide');
-            });
+                    $(this).on('mouseout', function () {
+                        $(this).popover('hide');
+                    });
 
-            $(this).on('hide.bs.popover', function(){
-                $(document).off('click.popover');
+                    $(this).on('hide.bs.popover', function () {
+                        $(document).off('click.popover');
+                    });
+                });
             });
         });
-      });
-</script>
+    </script>
 {% endblock %}
