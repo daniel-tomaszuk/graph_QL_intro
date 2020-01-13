@@ -76,36 +76,35 @@
                 $(satIcon).appendTo($(mapDiv));
 
                 // main loop for data points
-                for (var l = 0; l < dataResponse.positions.length; l++) {
+                for (var l = 1; l < dataResponse.positions.length; l++) {
                     var node = dataResponse.positions[l];
+                    var previous_node = dataResponse.positions[l-1];
+
                     // find history objects for satellite with name i-th unique name
                     var point = mapDivPoint(color);
                     $(point).appendTo($(mapDiv));
                     // count where to put past position icon
                     var xPx = scaleX(node.longitude, positionInfo.width);
-                    var yPx = scaleY(node.latitude, positionInfo.height);
+                    var yPx = scaleY(node.latitude, positionInfo.height);                    var xPx = scaleX(node.longitude, positionInfo.width);
+
+                    var xPx_prev = scaleX(previous_node.longitude, positionInfo.width);
+                    var yPx_prev = scaleY(previous_node.latitude, positionInfo.height);
 
                     $(point).css('left', xPx + "px");
                     $(point).css('top', yPx + "px");
                     $(point).css('display', '');
-                    // push history x and y coordinates in the coordinates list
-                    console.log('APPEND');
-                    point_list.push([xPx, yPx]);
-                }
 
-                // draw lines between points
-                for (var k = 0; k < parseInt((point_list.length)) - 1; k++) {
-                    console.log('DRAW');
-                    var x1 = parseInt(point_list[k][0])
-                    var y1 = parseInt(point_list[k][1])
-                    var x2 = parseInt(point_list[k + 1][0])
-                    var y2 = parseInt(point_list[k + 1][1])
+                    $(point).css('left', xPx_prev + "px");
+                    $(point).css('top', yPx_prev + "px");
+                    $(point).css('display', '');
+
                     // count distance between two points
-                    var dist = Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
+                    var dist = Math.sqrt(Math.pow((xPx_prev - xPx), 2) + Math.pow((yPx_prev - yPx), 2));
                     // draw line if the distance is close enough
                     if (dist < 100) {
-                        mapDiv.appendChild(createLine(x1, y1, x2, y2, color));
+                        mapDiv.appendChild(createLine(xPx_prev, yPx_prev, xPx, yPx, color));
                     }
+                    console.log('DRAW');
                 }
 
                 // popovers
