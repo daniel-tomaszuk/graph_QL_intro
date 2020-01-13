@@ -115,15 +115,11 @@
           var node = response.data.allPositions.edges[l].node
 
           // find history objects for satellite with name i-th unique name
-          var point = mapDivPoint(color);
+          var point = mapDivPoint(color, xPx, yPx);
           $(point).appendTo($('#box'));
           // count where to put past position icon
           var xPx = scaleX(node.longitude, positionInfo.width);
           var yPx = scaleY(node.latitude, positionInfo.height);
-
-          $(point).css('left', xPx + "px");
-          $(point).css('top', yPx + "px");
-          $(point).css('display', '');
           // push history x and y coordinates in the coordinates list
           point_list.push([xPx, yPx]);
         }
