@@ -11,8 +11,7 @@ config.env*
 config.env
 *.env
 *.local
-*static
-static/
+
 
 
 ### Django ###
