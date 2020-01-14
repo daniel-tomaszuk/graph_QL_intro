@@ -9,6 +9,9 @@
 
     <script src="{% static 'core/components/make-request.js' %}"></script>
     <script src="{% static 'core/components/draw-points.js' %}"></script>
+    <script src="{% static 'core/components/prepare-satellite.js' %}"></script>
+    <script src="{% static 'core/components/position-satellite.js' %}"></script>
+
     <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
 {% endblock %}
 
@@ -30,49 +33,27 @@
             const restAPIUrl = 'http://' + backendBaseURL + '{% url "satellite-positions-rest-list" %}'
 
             console.log(restAPIUrl)
-
-            const worldMapURL = '{% static "tracker/world.jpg" %}';
             const satelliteURL = '{% static "tracker/sat.png" %}';
-            const dataPointURL = '{% static "tracker/square.png" %}';
 
             makeRequest('get', restAPIUrl, '').then(function (response) {
                 console.log('GOT RESPONSE');
 
-                var mapDiv = $('#box');
-                var positionInfo = document.querySelector('#box').getBoundingClientRect();
-                var color = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
-                var point_list = [];
+                let mapDiv = $('#box');
+                const positionInfo = document.querySelector('#box').getBoundingClientRect();
+                const color = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
 
-                var satIcon = $('<img />');
-                var dataResponse = response[0];
-                var dataContent = "Longi: " + (dataResponse.positions[0].longitude).toFixed(2) +
-                    '<br>' +
-                    "Lati: " + (dataResponse.positions[0].latitude).toFixed(2)
-
-                $(satIcon).attr('class', 'pop');
-                $(satIcon).attr('id', 'SatId_' + dataResponse.noradId);
-                $(satIcon).attr('src', satelliteURL);
-                $(satIcon).attr('alt', 'Sat ' + dataResponse.name);
-                $(satIcon).attr('data-toggle', 'popover');
-                $(satIcon).attr('data-trigger', 'focus');
-                $(satIcon).attr('data-html', true);
-                $(satIcon).attr('title', dataResponse.name);
-                $(satIcon).attr('data-content', dataContent);
-                $(satIcon).css('display', 'none');
-                $(satIcon).css('width', "2%");
-                $(satIcon).css('height', "4%");
-                $(satIcon).css('position', 'absolute');
-                $(satIcon).css('top', '0px');
-                $(satIcon).css('left', '0px');
+                const dataResponse = response[0];
+                const dataContent = "Longi: " + (dataResponse.positions[0].longitude).toFixed(2) +
+                    "<br>" + "Lati: " + (dataResponse.positions[0].latitude).toFixed(2)
+                let satIcon = prepareSatellite(dataResponse, dataContent, satelliteURL);
+                console.log('GOT SAT ICON');
+                console.log(satIcon);
 
                 // put the most actual satellite position on map
                 // count where to put the most actual satellite position
                 xPx = scaleX(dataResponse.positions[0].longitude, positionInfo.width);
                 yPx = scaleY(dataResponse.positions[0].latitude, positionInfo.height);
-                $(satIcon).css('left', xPx - 10 + "px");
-                $(satIcon).css('top', yPx - 20 + "px");
-                $(satIcon).css('display', '');
-                $(satIcon).css('z-index', '10');
+                satIcon = positionSatellite(satIcon, xPx, yPx);
                 $(mapDiv).append($(satIcon));
 
                 // main loop for data points
@@ -88,8 +69,10 @@
 
                     var point = mapDivPoint(color, xPx, yPx);
                     var point_prev = mapDivPoint(color, xPx_prev, yPx_prev);
+                    debugger;
                     $(mapDiv).append($(point));
                     $(mapDiv).append($(point_prev));
+                    debugger;
 
                     // count distance between two points
                     var dist = Math.sqrt(Math.pow((xPx_prev - xPx), 2) + Math.pow((yPx_prev - yPx), 2));
