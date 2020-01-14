@@ -31,7 +31,7 @@ class PositionNode(DjangoObjectType):
         model = Position
         filter_fields = {
             "satellite__name": ["exact", "icontains", "istartswith"],
-            "timestamp": ["exact"],
+            "timestamp": ["exact", "lte", "gte"],
         }
         interfaces = (graphene.relay.Node,)
 
