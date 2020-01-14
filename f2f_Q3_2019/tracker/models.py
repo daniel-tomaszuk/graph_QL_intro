@@ -7,11 +7,13 @@ class Satellite(models.Model):
     created = models.DateTimeField(db_index=True, auto_now_add=True)
 
     def __str__(self):
-        return f'Satellite {self.name} | NORAD: {self.norad_id}'
+        return f"Satellite {self.name} | NORAD: {self.norad_id}"
 
 
 class Position(models.Model):
-    satellite = models.ForeignKey(Satellite, related_name='positions', on_delete=models.CASCADE)
+    satellite = models.ForeignKey(
+        Satellite, related_name="positions", on_delete=models.CASCADE
+    )
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     altitude = models.FloatField(null=True, blank=True)
@@ -27,5 +29,7 @@ class Position(models.Model):
     timestamp = models.DateTimeField(db_index=True, auto_now_add=True)
 
     def __str__(self):
-        return f'Position for Satellite {self.satellite.name} | {self.timestamp.isoformat()} | LAT: ' \
-               f'{self.latitude}, LONG: {self.longitude}, ALT: {self.altitude}'
+        return (
+            f"Position for Satellite {self.satellite.name} | {self.timestamp.isoformat()} | LAT: "
+            f"{self.latitude}, LONG: {self.longitude}, ALT: {self.altitude}"
+        )
