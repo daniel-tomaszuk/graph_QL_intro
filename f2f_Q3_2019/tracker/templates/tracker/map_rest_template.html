@@ -7,6 +7,9 @@
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
             crossorigin="anonymous"></script>
 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
     <script src="{% static 'core/components/make-request.js' %}"></script>
     <script src="{% static 'core/components/draw-points.js' %}"></script>
     <script src="{% static 'core/components/prepare-satellite.js' %}"></script>
@@ -27,16 +30,10 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             let backendBaseURL = '{{ backend_url }}';
-            console.log('GOT BACKEND URL');
-            console.log(backendBaseURL);
-
             const restAPIUrl = 'http://' + backendBaseURL + '{% url "satellite-positions-rest-list" %}'
-
-            console.log(restAPIUrl)
             const satelliteURL = '{% static "tracker/sat.png" %}';
 
             makeRequest('get', restAPIUrl, '').then(function (response) {
-                console.log('GOT RESPONSE');
 
                 let mapDiv = $('#box');
                 const positionInfo = document.querySelector('#box').getBoundingClientRect();
@@ -46,8 +43,6 @@
                 const dataContent = "Longi: " + (dataResponse.positions[0].longitude).toFixed(2) +
                     "<br>" + "Lati: " + (dataResponse.positions[0].latitude).toFixed(2)
                 let satIcon = prepareSatellite(dataResponse, dataContent, satelliteURL);
-                console.log('GOT SAT ICON');
-                console.log(satIcon);
 
                 // put the most actual satellite position on map
                 // count where to put the most actual satellite position
@@ -56,6 +51,7 @@
                 satIcon = positionSatellite(satIcon, xPx, yPx);
                 $(mapDiv).append($(satIcon));
 
+                console.log(dataResponse.positions.length);
                 // main loop for data points
                 for (var l = 1; l < dataResponse.positions.length; l++) {
                     var node = dataResponse.positions[l];
@@ -69,10 +65,9 @@
 
                     var point = mapDivPoint(color, xPx, yPx);
                     var point_prev = mapDivPoint(color, xPx_prev, yPx_prev);
-                    debugger;
+
                     $(mapDiv).append($(point));
                     $(mapDiv).append($(point_prev));
-                    debugger;
 
                     // count distance between two points
                     var dist = Math.sqrt(Math.pow((xPx_prev - xPx), 2) + Math.pow((yPx_prev - yPx), 2));
@@ -80,7 +75,6 @@
                     if (dist < 100) {
                         $(mapDiv).append($(createLine(xPx_prev, yPx_prev, xPx, yPx, color)));
                     }
-                    console.log('DRAW');
                 }
 
                 // popovers
