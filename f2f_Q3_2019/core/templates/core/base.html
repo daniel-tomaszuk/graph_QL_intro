@@ -9,8 +9,16 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>f2f Q3 2019 APP</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" type="text/css">
-    <script href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
     <script src="{% static 'core/moment.js' %}"></script>
     {% block additional_head %}
@@ -29,10 +37,10 @@
               <input class='select-period' type="radio" name="time-period" value="yesterday">Yesterday
             </label>
             <label class="radio-inline">
-              <input class='select-period' type="radio" name="time-period" value="thisWeek">This Week
+              <input class='select-period' type="radio" name="time-period" value="this-week">This Week
             </label>
             <label class="radio-inline">
-              <input class='select-period' type="radio" name="time-period" value="thisMonth">This Month
+              <input class='select-period' type="radio" name="time-period" value="this-month">This Month
             </label>
             <label class="radio-inline">
               <input class='select-period' type="radio" name="time-period" value="all">All

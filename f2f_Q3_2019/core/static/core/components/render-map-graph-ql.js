@@ -42,10 +42,10 @@ function renderGraphQl(graphAPIURL) {
                 $(mapDiv).append($(point_prev));
 
                 // count distance between two points
-                var dist = Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
+                var dist = Math.sqrt(Math.pow((xPx_prev - xPx), 2) + Math.pow((yPx_prev - yPx), 2));
                 // draw line if the distance is close enough
                 if (dist < 100) {
-                    mapDiv.appendChild(createLine(x1, y1, x2, y2, color));
+                    mapDiv.appendChild(createLine(xPx_prev, yPx_prev, xPx, yPx, color));
                 }
             }
             addPopovers();

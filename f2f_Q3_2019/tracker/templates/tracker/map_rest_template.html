@@ -2,19 +2,16 @@
 {% load static %}
 
 {% block additional_head %}
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-            crossorigin="anonymous"></script>
-
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
     <script src="{% static 'core/components/make-request.js' %}"></script>
     <script src="{% static 'core/components/draw-points.js' %}"></script>
+    <script src="{% static 'core/components/add_popovers.js' %}"></script>
+    <script src="{% static 'core/components/get-time-period.js' %}"></script>
+    <script src="{% static 'core/components/render-map-rest.js' %}"></script>
+    <script src="{% static 'core/components/get-position-query.js' %}"></script>
+    <script src="{% static 'core/components/clean-map.js' %}"></script>
     <script src="{% static 'core/components/prepare-satellite.js' %}"></script>
     <script src="{% static 'core/components/position-satellite.js' %}"></script>
-    <script src="{% static 'core/components/add_popovers.js' %}"></script>
 
     <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
 {% endblock %}
@@ -29,56 +26,20 @@
 
 {% block additional_scripts %}
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let backendBaseURL = '{{ backend_url }}';
-            const restAPIUrl = 'http://' + backendBaseURL + '{% url "satellite-positions-rest-list" %}'
-            const satelliteURL = '{% static "tracker/sat.png" %}';
+        const backendBaseURL = '{{ backend_url }}';
+        const satelliteURL = '{% static "tracker/sat.png" %}';
+        const restAPIUrl = 'http://' + backendBaseURL + '{% url "satellite-positions-rest-list" %}';
 
-            makeRequest('get', restAPIUrl, '').then(function (response) {
+        let timePeriodString = $('.select-period:checked')[0].value;
 
-                let mapDiv = $('#box');
-                const positionInfo = document.querySelector('#box').getBoundingClientRect();
-                const color = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
-
-                const dataResponse = response[0];
-                const dataContent = "Longi: " + (dataResponse.positions[0].longitude).toFixed(2) +
-                    "<br>" + "Lati: " + (dataResponse.positions[0].latitude).toFixed(2)
-                let satIcon = prepareSatellite(dataResponse, dataContent, satelliteURL);
-
-                // put the most actual satellite position on map
-                // count where to put the most actual satellite position
-                xPx = scaleX(dataResponse.positions[0].longitude, positionInfo.width);
-                yPx = scaleY(dataResponse.positions[0].latitude, positionInfo.height);
-                satIcon = positionSatellite(satIcon, xPx, yPx);
-                $(mapDiv).append($(satIcon));
-
-                console.log(dataResponse.positions.length);
-                // main loop for data points
-                for (var l = 1; l < dataResponse.positions.length; l++) {
-                    var node = dataResponse.positions[l];
-                    var previous_node = dataResponse.positions[l-1];
-
-                    var xPx = scaleX(node.longitude, positionInfo.width);
-                    var yPx = scaleY(node.latitude, positionInfo.height);
-
-                    var xPx_prev = scaleX(previous_node.longitude, positionInfo.width);
-                    var yPx_prev = scaleY(previous_node.latitude, positionInfo.height);
-
-                    var point = mapDivPoint(color, xPx, yPx);
-                    var point_prev = mapDivPoint(color, xPx_prev, yPx_prev);
-
-                    $(mapDiv).append($(point));
-                    $(mapDiv).append($(point_prev));
-
-                    // count distance between two points
-                    var dist = Math.sqrt(Math.pow((xPx_prev - xPx), 2) + Math.pow((yPx_prev - yPx), 2));
-                    // draw line if the distance is close enough
-                    if (dist < 100) {
-                        $(mapDiv).append($(createLine(xPx_prev, yPx_prev, xPx, yPx, color)));
-                    }
-                }
-                addPopovers();
-            });
+        // on init
+        renderRest(restAPIUrl + '?query=' + timePeriodString, satelliteURL);
+        const periodSelectForm = $('.period-select-form');
+        // on change
+        $(periodSelectForm).change(function (event) {
+            cleanMap();
+            timePeriodString = $('.select-period:checked')[0].value;
+            renderRest(restAPIUrl + '?query=' + timePeriodString, satelliteURL);
         });
     </script>
 {% endblock %}
