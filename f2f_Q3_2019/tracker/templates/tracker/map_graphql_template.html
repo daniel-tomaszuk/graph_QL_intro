@@ -19,6 +19,9 @@
     <script src="{% static 'core/components/get-time-period.js' %}"></script>
     <script src="{% static 'core/components/render-map-graph-ql.js' %}"></script>
     <script src="{% static 'core/components/get-position-query.js' %}"></script>
+    <script src="{% static 'core/components/clean-map.js' %}"></script>
+    <script src="{% static 'core/components/prepare-satellite.js' %}"></script>
+    <script src="{% static 'core/components/position-satellite.js' %}"></script>
 
     <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
 {% endblock %}
@@ -64,6 +67,7 @@
       renderGraphQl(graphAPIURL);
       const periodSelectForm = $('.period-select-form');
         $(periodSelectForm).change(function(event) {
+            cleanMap();
             renderGraphQl(graphAPIURL);
         });
     }

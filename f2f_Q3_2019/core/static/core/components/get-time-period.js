@@ -10,7 +10,6 @@ function getTimePeriod() {
             all: '',
 
         };
-        debugger;
         return choices[timePeriodString];
     }
     return ''

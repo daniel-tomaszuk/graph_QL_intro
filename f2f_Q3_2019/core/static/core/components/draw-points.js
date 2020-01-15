@@ -34,7 +34,8 @@ function mapDivPoint(color, x, y){
         .css('background-color', color)
         .css('left', x + "px")
         .css('top', y +'px')
-        .css('display', '');
+        .css('display', '')
+        .attr('class', 'point');
     return $(point)
 };
 
@@ -48,6 +49,8 @@ function createLineElement(x, y, length, angle, color){
     * @param {string} color - Color of the line.
     */
     var line = document.createElement('div');
+    line.className = 'line';
+
     var styles = 'border: 1px solid;'
                + 'width: ' + length + 'px; '
                + 'height: 0px; '

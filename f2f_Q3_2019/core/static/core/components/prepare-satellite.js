@@ -2,6 +2,7 @@
 function prepareSatellite(dataResponse, dataContent, satelliteURL) {
     return $('<img />')
         .attr('class', 'pop')
+        .attr('class', 'satellite')
         .attr('id', 'SatId_' + dataResponse.noradId)
         .attr('src', satelliteURL)
         .attr('alt', 'Sat ' + dataResponse.name)
