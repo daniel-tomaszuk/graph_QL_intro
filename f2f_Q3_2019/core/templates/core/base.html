@@ -8,7 +8,8 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>f2f Q3 2019 APP</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          type="text/css">
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
@@ -25,28 +26,36 @@
     {% endblock %}
 </head>
 <body>
-    {% block content %}
-    {% endblock %}
-    <div class="container align-center">
-        <form class="period-select-form">
-            <b>Choose Time Period:</b>
-            <label class="radio-inline">
-              <input class='select-period' type="radio" name="time-period" value="today" checked>Today
-            </label>
-            <label class="radio-inline">
-              <input class='select-period' type="radio" name="time-period" value="yesterday">Yesterday
-            </label>
-            <label class="radio-inline">
-              <input class='select-period' type="radio" name="time-period" value="this-week">This Week
-            </label>
-            <label class="radio-inline">
-              <input class='select-period' type="radio" name="time-period" value="this-month">This Month
-            </label>
-            <label class="radio-inline">
-              <input class='select-period' type="radio" name="time-period" value="all">All
-            </label>
-        </form>
+{% block content %}
+{% endblock %}
+<div class="container align-center">
+    <div class="form-row container">
+        <div class="btn-group-sm" style="margin-right: 5px">
+            <a href="{% url "graph-map" %}" class="btn btn-default">GRAPH API</a>
+            <a href="{% url "rest-map" %}" class="btn btn-default">REST API</a>
+        </div>
+        <div>
+            <form class="period-select-form" style="margin-top: 5px">
+                <b>Choose Time Period:</b>
+                <label class="radio-inline">
+                    <input class='select-period' type="radio" name="time-period" value="today" checked>Today
+                </label>
+                <label class="radio-inline">
+                    <input class='select-period' type="radio" name="time-period" value="yesterday">Yesterday
+                </label>
+                <label class="radio-inline">
+                    <input class='select-period' type="radio" name="time-period" value="this-week">This Week
+                </label>
+                <label class="radio-inline">
+                    <input class='select-period' type="radio" name="time-period" value="this-month">This Month
+                </label>
+                <label class="radio-inline">
+                    <input class='select-period' type="radio" name="time-period" value="all">All
+                </label>
+            </form>
+        </div>
     </div>
+</div>
 
 </body>
 
