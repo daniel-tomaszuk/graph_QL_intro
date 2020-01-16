@@ -2,26 +2,26 @@ function renderRest(restAPIUrl, satelliteURL) {
 
     makeRequest('get', restAPIUrl, '').then(function (response) {
         const dataResponse = response[0];
-        if (dataResponse) {
+        if (dataResponse.satellite_positions.length) {
             let mapDiv = $('#box');
             const positionInfo = document.querySelector('#box').getBoundingClientRect();
             const color = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
-            const dataContent = "Longi: " + (dataResponse.positions[0].longitude).toFixed(2) +
-                "<br>" + "Lati: " + (dataResponse.positions[0].latitude).toFixed(2)
+            const dataContent = "Longi: " + (dataResponse.satellite_positions[0].longitude).toFixed(2) +
+                "<br>" + "Lati: " + (dataResponse.satellite_positions[0].latitude).toFixed(2)
             let satIcon = prepareSatellite(dataResponse, dataContent, satelliteURL);
 
             // put the most actual satellite position on map
             // count where to put the most actual satellite position
-            xPx = scaleX(dataResponse.positions[0].longitude, positionInfo.width);
-            yPx = scaleY(dataResponse.positions[0].latitude, positionInfo.height);
+            xPx = scaleX(dataResponse.satellite_positions[0].longitude, positionInfo.width);
+            yPx = scaleY(dataResponse.satellite_positions[0].latitude, positionInfo.height);
             satIcon = positionSatellite(satIcon, xPx, yPx);
             $(mapDiv).append($(satIcon));
 
-            console.log(dataResponse.positions.length);
+            console.log(dataResponse.satellite_positions.length);
             // main loop for data points
-            for (var l = 1; l < dataResponse.positions.length; l++) {
-                var node = dataResponse.positions[l];
-                var previous_node = dataResponse.positions[l - 1];
+            for (var l = 1; l < dataResponse.satellite_positions.length; l++) {
+                var node = dataResponse.satellite_positions[l];
+                var previous_node = dataResponse.satellite_positions[l - 1];
 
                 var xPx = scaleX(node.longitude, positionInfo.width);
                 var yPx = scaleY(node.latitude, positionInfo.height);

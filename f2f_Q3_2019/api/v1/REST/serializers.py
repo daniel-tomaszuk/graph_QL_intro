@@ -11,8 +11,8 @@ class PositionSerializer(serializers.ModelSerializer):
 
 
 class SatelliteSerializer(serializers.ModelSerializer):
-    positions = PositionSerializer(many=True, read_only=True)
+    satellite_positions = PositionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Satellite
-        fields = ["name", "norad_id", "positions"]
+        fields = ["name", "norad_id", "satellite_positions"]
