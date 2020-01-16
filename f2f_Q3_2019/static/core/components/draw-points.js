@@ -18,7 +18,7 @@ function scaleY(longi, yMax){
     return yPx;
 };
 
-function mapDivPoint(color){
+function mapDivPoint(color, x, y){
     /**
     * Create point as mapDiv tag.
     * @param {string} size - size of the point. Same as in CSS.
@@ -26,11 +26,16 @@ function mapDivPoint(color){
     */
     var point = $('<mapDiv>');
     var size = '3px';
+
     $(point)
         .css('position', 'absolute')
         .css('width', size)
         .css('height', size)
-        .css('background-color', color);
+        .css('background-color', color)
+        .css('left', x + "px")
+        .css('top', y +'px')
+        .css('display', '')
+        .attr('class', 'point');
     return $(point)
 };
 
@@ -44,6 +49,8 @@ function createLineElement(x, y, length, angle, color){
     * @param {string} color - Color of the line.
     */
     var line = document.createElement('div');
+    line.className = 'line';
+
     var styles = 'border: 1px solid;'
                + 'width: ' + length + 'px; '
                + 'height: 0px; '
