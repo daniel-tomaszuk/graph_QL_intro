@@ -1,12 +1,12 @@
 import calendar
-from datetime import datetime
 from datetime import timedelta
 from enum import Enum
 
 from dateutil.relativedelta import relativedelta
 from delorean import Delorean
+from django.utils import timezone
 
-NOW = datetime.now()
+NOW = timezone.datetime.now()
 TODAY_DATE = NOW.date()
 WEEK_START = TODAY_DATE - timedelta(days=TODAY_DATE.weekday())
 WEEK_END = WEEK_START + timedelta(days=6)
@@ -17,7 +17,7 @@ MONTH_END = TODAY_DATE.replace(
 
 
 class PeriodQueryParamsEnums(Enum):
-    TODAY = Delorean().start_of_day, NOW
+    TODAY = TODAY_DATE, TODAY_DATE
     YESTERDAY = (
         Delorean().start_of_day - relativedelta(days=1),
         Delorean().end_of_day - relativedelta(days=1),
