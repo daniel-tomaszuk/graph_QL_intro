@@ -42,8 +42,7 @@ function renderRest(restAPIUrl, satelliteURL) {
                     $(mapDiv).append($(createLine(xPx_prev, yPx_prev, xPx, yPx, color)));
                 }
             }
-            addPopovers();
-
         }
+        addPopovers();
     });
 }

@@ -48,9 +48,9 @@ function renderGraphQl(graphAPIURL) {
                     mapDiv.appendChild(createLine(xPx_prev, yPx_prev, xPx, yPx, color));
                 }
             }
-            addPopovers();
         } else {
             console.log('No data points received.');
         }
+        addPopovers();
     });
 }
