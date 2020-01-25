@@ -10,6 +10,7 @@ function makeRequest(method, url, positionQuery) {
         url: url,
         headers: {
           'Content-Type': 'application/json',
+          'X-Client-Timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
         timeoutSeconds: 5,
       }).then(function (response) {
