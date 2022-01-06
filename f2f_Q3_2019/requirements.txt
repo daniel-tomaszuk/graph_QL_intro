@@ -2,7 +2,7 @@ amqp==2.5.0
 aniso8601==6.0.0
 billiard==3.6.0.0
 black==19.10b0
-celery==4.3.0
+celery==5.2.2
 Delorean==1.0.0
 Django==2.2.13
 django-cors-headers==3.2.0
